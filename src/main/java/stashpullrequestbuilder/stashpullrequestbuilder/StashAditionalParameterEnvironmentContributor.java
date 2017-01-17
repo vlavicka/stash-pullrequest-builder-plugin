@@ -32,6 +32,9 @@ public class StashAditionalParameterEnvironmentContributor extends EnvironmentCo
         for (String param : params) {
             addParameter(param, pa, envs);
         }
+        for (String param: cause.getAdditionalParameters().keySet()) {
+            addParameter(param, pa, envs);
+        }
         super.buildEnvironmentFor(r, envs, listener);
     }
 
