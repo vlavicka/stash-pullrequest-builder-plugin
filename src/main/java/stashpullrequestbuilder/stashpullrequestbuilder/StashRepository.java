@@ -111,7 +111,22 @@ public class StashRepository {
 		}
 
         return result;
-   }
+    }
+
+    private boolean isCommentWithBuildPhrase(String content) {
+        String lines[] = content.split("\\r?\\n|\\r");
+        if (lines[0].equals(trigger.getCiBuildPhrases())) {
+            return true;
+        }
+        return false;
+    }
+
+    private Map<String, String> getParametersFromComment(StashPullRequestComment comment) {
+        String content = comment.getText();
+        content = content == null || content.isEmpty() ? "" : content;
+        logger.info("Comment: " + content);
+        return getParametersFromContent(content);
+    }
 
     public Map<String, String> getAdditionalParameters(StashPullRequestResponseValue pullRequest){
         StashPullRequestResponseValueRepository destination = pullRequest.getToRef();
@@ -126,15 +141,16 @@ public class StashRepository {
 
             Map<String, String> result = new TreeMap<String, String>();
 
-            for (StashPullRequestComment comment : comments) {
-                String content = comment.getText();
-                if (content == null || content.isEmpty()) {
-                    continue;
+            if (trigger.isUseOnlyLastCommentForAdditionalParameters()){
+                for (int i = comments.size() - 1; i >= 0; --i) {
+                    if (isCommentWithBuildPhrase(comments.get(i).getText())) {
+                        result.putAll(getParametersFromComment(comments.get(i)));
+                        break;
+                    }
                 }
-
-                Map<String,String> parameters = getParametersFromContent(content);
-                for(String key : parameters.keySet()){
-                	result.put(key, parameters.get(key));
+            } else {
+                for (StashPullRequestComment comment : comments) {
+                    result.putAll(getParametersFromComment(comment));
                 }
             }
             return result;

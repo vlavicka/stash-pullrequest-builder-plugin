@@ -66,6 +66,7 @@ public class StashBuildTrigger extends Trigger<AbstractProject<?, ?>> {
     private final boolean onlyBuildOnComment;
     private final boolean deletePreviousBuildFinishComments;
     private final boolean cancelOutdatedJobsEnabled;
+    private final boolean useOnlyLastCommentForAdditionalParameters;
 
     transient private StashPullRequestsBuilder stashPullRequestsBuilder;
 
@@ -90,7 +91,8 @@ public class StashBuildTrigger extends Trigger<AbstractProject<?, ?>> {
             String ciBuildPhrases,
             boolean deletePreviousBuildFinishComments,
             String targetBranchesToBuild,
-            boolean cancelOutdatedJobsEnabled
+            boolean cancelOutdatedJobsEnabled,
+            boolean useOnlyLastCommentForAdditionalParameters
     ) throws ANTLRException {
         super(cron);
         this.projectPath = projectPath;
@@ -110,6 +112,7 @@ public class StashBuildTrigger extends Trigger<AbstractProject<?, ?>> {
         this.onlyBuildOnComment = onlyBuildOnComment;
         this.deletePreviousBuildFinishComments = deletePreviousBuildFinishComments;
         this.targetBranchesToBuild = targetBranchesToBuild;
+        this.useOnlyLastCommentForAdditionalParameters = useOnlyLastCommentForAdditionalParameters;
     }
 
     public String getStashHost() {
@@ -186,6 +189,10 @@ public class StashBuildTrigger extends Trigger<AbstractProject<?, ?>> {
 
     public boolean isCancelOutdatedJobsEnabled() {
         return cancelOutdatedJobsEnabled;
+    }
+
+    public boolean isUseOnlyLastCommentForAdditionalParameters() {
+        return useOnlyLastCommentForAdditionalParameters;
     }
 
     @Override
