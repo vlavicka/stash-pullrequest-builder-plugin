@@ -282,10 +282,14 @@ public class StashRepository {
             }
 
             boolean isOnlyBuildOnComment = trigger.isOnlyBuildOnComment();
-
+            boolean isInExcludeList = trigger.getOnlyBuildOnCommentExcludeList().contains(pullRequest.getToRef().getBranch().getName());
             if (isOnlyBuildOnComment) {
-                shouldBuild = false;
+                if (!isInExcludeList) {
+                    shouldBuild = false;
+                }
             }
+
+            logger.info(String.format("*** shouldBuild = %s", shouldBuild));
 
             String sourceCommit = pullRequest.getFromRef().getLatestCommit();
 
@@ -317,8 +321,10 @@ public class StashRepository {
                         finishMatcher.find()) {
                         //in build only on comment, we should stop parsing comments as soon as a PR builder comment is found.
                         if(isOnlyBuildOnComment) {
-                            assert !shouldBuild;
-                            break;
+                            if (!isInExcludeList) {
+                                assert !shouldBuild;
+                                break;
+                            }
                         }
 
                         String sourceCommitMatch;

@@ -67,6 +67,7 @@ public class StashBuildTrigger extends Trigger<AbstractProject<?, ?>> {
     private final boolean deletePreviousBuildFinishComments;
     private final boolean cancelOutdatedJobsEnabled;
     private final boolean useOnlyLastCommentForAdditionalParameters;
+    private final String onlyBuildOnCommentExclude;
 
     transient private StashPullRequestsBuilder stashPullRequestsBuilder;
 
@@ -92,7 +93,8 @@ public class StashBuildTrigger extends Trigger<AbstractProject<?, ?>> {
             boolean deletePreviousBuildFinishComments,
             String targetBranchesToBuild,
             boolean cancelOutdatedJobsEnabled,
-            boolean useOnlyLastCommentForAdditionalParameters
+            boolean useOnlyLastCommentForAdditionalParameters,
+            String onlyBuildOnCommentExclude
     ) throws ANTLRException {
         super(cron);
         this.projectPath = projectPath;
@@ -113,6 +115,7 @@ public class StashBuildTrigger extends Trigger<AbstractProject<?, ?>> {
         this.deletePreviousBuildFinishComments = deletePreviousBuildFinishComments;
         this.targetBranchesToBuild = targetBranchesToBuild;
         this.useOnlyLastCommentForAdditionalParameters = useOnlyLastCommentForAdditionalParameters;
+        this.onlyBuildOnCommentExclude = onlyBuildOnCommentExclude;
     }
 
     public String getStashHost() {
@@ -323,6 +326,20 @@ public class StashBuildTrigger extends Trigger<AbstractProject<?, ?>> {
 
     public boolean isOnlyBuildOnComment() {
         return onlyBuildOnComment;
+    }
+
+    public String getOnlyBuildOnCommentExclude() {
+        return onlyBuildOnCommentExclude;
+    }
+
+    public List<String> getOnlyBuildOnCommentExcludeList() {
+        List<String> result = new ArrayList<String>();
+        if ((onlyBuildOnCommentExclude != null) || (!onlyBuildOnCommentExclude.isEmpty())) {
+            for (String name : onlyBuildOnCommentExclude.split(",")) {
+                result.add(name.trim());
+            }
+        }
+        return result;
     }
 
     public static final class StashBuildTriggerDescriptor extends TriggerDescriptor {

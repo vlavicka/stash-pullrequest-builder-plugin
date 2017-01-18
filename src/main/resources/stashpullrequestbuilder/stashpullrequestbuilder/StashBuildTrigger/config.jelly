@@ -46,6 +46,9 @@
     <f:entry title="Only build when asked (with test phrase)" field="onlyBuildOnComment">
       <f:checkbox default="false"/>
     </f:entry>
+    <f:entry title="Always build following branches" field="onlyBuildOnCommentExclude">
+      <f:textbox default=""/>
+    </f:entry>
     <f:entry title="CI Build Phrases" field="ciBuildPhrases">
       <f:textbox default="test this please"/>
     </f:entry>
